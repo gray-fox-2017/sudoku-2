@@ -33,7 +33,7 @@ class Sudoku {
         i--;
       }
       this.boardbagus()
-      this.sleep(200)
+      //this.sleep(200)
       this.reset_board()
     }
     this.boardbagus()
@@ -152,7 +152,7 @@ class Sudoku {
 let fs = require('fs')
 let board_string = fs.readFileSync('set-04_peter-norvig_11-hardest-puzzles.txt')
   .toString()
-  .split("\n")[5]
+  .split("\n")[10]
 
 let game = new Sudoku(board_string)
 
