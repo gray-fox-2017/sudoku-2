@@ -97,9 +97,9 @@ class Sudoku {
 
     line = line.join("");
 
-    for (let k = 0; k < 4; k++) {
-      init.splice(k * 4, 0, line);
-      this.solving.splice(k * 4, 0, line);
+    for (let k = 0; k < 16; k += 4) {
+      init.splice(k, 0, line);
+      this.solving.splice(k, 0, line);
     }
 
     console.log(`Problem : ${this.string}\n`);
