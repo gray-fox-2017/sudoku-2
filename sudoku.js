@@ -5,16 +5,16 @@ class Sudoku {
     this._board = board_string;
   }
 
-  checkRow(board, row, num) {
-    for (let col = 0; col < 9; col++)
+  checkRow(board, col, num) {
+    for (let row = 0; row < 9; row++)
     if (board[row][col] == num)
     return false;
 
     return true;
   }
 
-  checkCol(board, col, num) {
-    for (let row = 0; row < 9; row++)
+  checkCol(board, row, num) {
+    for (let col = 0; col < 9; col++)
     if (board[row][col] == num)
     return false;
 
@@ -34,7 +34,7 @@ class Sudoku {
   }
 
   isAvailable(board,row,col,num) {
-    return this.checkRow(board,row,num) && this.checkCol(board,col,num) && this.check3x3(board,row,col,num);
+    return this.checkRow(board,col,num) && this.checkCol(board,row,num) && this.check3x3(board,row,col,num);
   }
 
   findUnassignedLocation(board,row,col) {
