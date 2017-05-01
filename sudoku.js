@@ -21,33 +21,33 @@ class Sudoku {
     return true;
   }
 
-  check3x3(board, row, col, num) {
-    row = row-row%3;
-    col = col-col%3;
+  check3x3(board,row,col,num) {
+    row=row-row%3;
+    col=col-col%3;
 
-    for (let r = 0; r < 3; r++)
-    for (let c = 0; c < 3; c++)
-    if (board[row + r][col + c] == num)
+    for (let row=0; row<3; row++)
+    for (let col=0; col<3; col++)
+    if (board[row+row][col+row] == num)
     return false;
 
     return true;
   }
 
-  isAvailable(board, row, col, num) {
-    return this.checkRow(board, row, num) && this.checkCol(board, col, num) && this.check3x3(board, row, col, num);
+  isAvailable(board,row,col,num) {
+    return this.checkRow(board,row,num) && this.checkCol(board,col,num) && this.check3x3(board,row,col,num);
   }
 
-  findUnassignedLocation(board, row, col) {
-    for (; row < 9 ; col = 0, row++)
-    for (; col < 9 ; col++)
+  findUnassignedLocation(board,row,col) {
+    for (;row<9; col=0,row++)
+    for (;col<9; col++)
     if (board[row][col] == 0)
-    return [row, col];
+    return [row,col];
 
-    return [-1, -1];
+    return [-1,-1];
   }
 
   solve(board=this._board, row=0, col=0) {
-    let cell = this.findUnassignedLocation(board, row, col);
+    let cell = this.findUnassignedLocation(board,row,col);
     row = cell[0];
     col = cell[1];
 
@@ -55,12 +55,12 @@ class Sudoku {
       return true;
     }
 
-    for (let num = 1; num <= 9; num++) {
+    for (let num=1; num<=9; num++) {
 
-      if ( this.isAvailable(board, row, col, num) ) {
-        board[row][col] = num;
+      if (this.isAvailable(board,row,col,num)) {
+        board[row][col]=num;
 
-        if ( this.solve(board, row, col) ) {
+        if (this.solve(board,row,col)) {
           return true;
         }
         board[row][col] = 0;
@@ -70,7 +70,7 @@ class Sudoku {
   }
 
   board() {
-    let arrSplit = this._board.split('');
+    let arrSplit=this._board.split('');
     let res=[];
     for(let i=0; i<arrSplit.length;i+=9){
       let arr=[];
