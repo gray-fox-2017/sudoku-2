@@ -22,12 +22,12 @@ class Sudoku {
   }
 
   check3x3(board,row,col,num) {
-    row=row-row%3;
-    col=col-col%3;
+    let startRow=row-row%3;
+    let startCol=col-col%3;
 
     for (let row=0; row<3; row++)
     for (let col=0; col<3; col++)
-    if (board[row+row][col+row] == num)
+    if (board[row+startRow][col+startCol] == num)
     return false;
 
     return true;
