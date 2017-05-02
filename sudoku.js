@@ -2,12 +2,14 @@
 //src = http://stackoverflow.com/questions/18420489/recursion-backtracking-sudoku-solver-in-js
 class Sudoku {
   constructor(board_string) {
-    this.board = board_string.split("");
-    this.big_board = [];
+    // this.board = board_string.split("");
     this.column = []
     this.solved = [];
+    this.length = 9;
+    this.emptyPlace = this.emptyMatrix();
+    this.big_board = this.create(board_string.split(""));
   }
-  create(){
+  create(str){
     // let big_board = [];
     for (let j = 0;j < 9; j++ ){
       this.column = [];
@@ -19,112 +21,125 @@ class Sudoku {
     }
     console.log("Before Solve");
     console.log(this.big_board);
+    return this.big_board;
+  }
+  emptyMatrix(){
+    let empty = [];
+    for(let i = 0; i < this.big_board.length; i++) {
+      for(let j = 0; j < this.big_board[i].length; j++) {
+        if(this.big_board[i][j] === 0) {
+          empty.push([i, j]);
+        }
+      }
+    }
+    console.log(empty);
+    return empty;
+  }
+
+  checkRow(row,value){
+    for(let i = 0; i < this.big_board[row].length; i++) {
+      if(this.big_board[row][i] === value) {
+        return false;
+      }
+    }
+    return true;
+  }
+  checkColumn(column,value){
+    for(let i = 0; i < this.big_board.length; i++) {
+      if(this.big_board[i][column] === value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  checkBlock(column, row, value){
+    let rowStart = Math.floor(row / 3) * 3;
+    let coloumnStart = Math.floor(column / 3) * 3;
+    for (var k = rowStart; k < Math.sqrt(this.length) + rowStart ; k++) {
+      for (var l = coloumnStart; l < Math.sqrt(this.length) + coloumnStart ; l++) {
+        if (value == this.big_board[k][l]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  checkValue(column, row, value){
+    if(this.checkRow(row, value) &&
+    this.checkColumn(column, value) &&
+    this.checkBlock(column, row, value)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   solve() {
-    var grid = this.big_board;
-    this.solveSudoku();
-    this.printGrid();
-  }
-
-  // Returns a string representing the current state of the board
-  board() {
-  }
-
-  solveSudoku(grid, row, col) {
-    var cell = this.findUnassignedLocation(grid, row, col);
-    row = cell[0];
-    col = cell[1];
-
-    // base case: if no empty cell
-    if (row == -1) {
-        console.log("solved");
-        return true;
-    }
-
-    for (var num = 1; num <= 9; num++) {
-        if ( this.noConflicts(grid, row, col, num) ) {
-            grid[row][col] = num;
-            if ( this.solveSudoku(grid, row, col) ) {
-                return true;
-            }
-                    // mark cell as empty (with 0)
-            grid[row][col] = 0;
-        }
-    }
-    // trigger back tracking
-    return false;
-  }
-
-
-  findUnassignedLocation(grid, row, col) {
-    var done = false;
-    var res = [-1, -1];
-
-    while (!done) {
-        if (row == 9) {
-            done = true;
+    let row, column, value, found;
+    for(let i = 0; i < this.emptyPlace.length;) {
+      row = this.emptyPlace[i][0];
+      column = this.emptyPlace[i][1];
+      value = this.big_board[row][column];
+      found = false;
+      while(!found && value <= this.length) {
+        if(this.checkValue(column, row, value)) {
+          found = true;
+          this.big_board[row][column] = value;
+          i++;
         }
         else {
-            if (grid[row][col] == 0) {
-                res[0] = row;
-                res[1] = col;
-                done = true;
-            }
-            else {
-                if (col < 8) {
-                    col++;
-                }
-                else {
-                    row++;
-                    col = 0;
-                }
-            }
+          value++;
         }
+      }
+      if(!found) {
+        this.big_board[row][column] = 0;
+        i--;
+      }
+      // this.print_board();
+      // this.sleep(100)
+      // this.reset_board()
     }
-    return res;
+    console.log("Sudoku Solve");
+    this.print_board();
+    return this.big_board;
   }
 
-  noConflicts(grid, row, col, num) {
-    return this.isRowOk(grid, row, num) && this.isColOk(grid, col, num) && this.isBoxOk(grid, row, col, num);
-  }
 
-  isRowOk(grid, row, num) {
-    for (var col = 0; col < 9; col++)
-        if (grid[row][col] == num)
-            return false;
-    return true;
-  }
+  print_board() {
+    let layout = "+++++++++++++++++++++++\n";
+    for (var i = 0; i < this.length ; i++) {
+      for (var j = 0; j < this.length; j++) {
+        if (j == 8) {
+          layout += this.big_board[i][j] + " + ";
+        } else if (j == 2 || j == 5) {
+           layout += this.big_board[i][j] + " | ";
+        } else {
+           layout += this.big_board[i][j] + " ";
+         }
+      }
 
-  isColOk(grid, col, num) {
-    for (var row = 0; row < 9; row++)
-    if (grid[row][col] == num)
-        return false;
-
-    return true;
-  }
-
-  isBoxOk(grid, row, col, num) {
-    row = Math.floor(row / 3) * 3;
-    col = Math.floor(col / 3) * 3;
-
-    for (var r = 0; r < 3; r++)
-        for (var c = 0; c < 3; c++)
-            if (grid[row + r][col + c] == num)
-                return false;
-
-    return true;
-  }
-
-  printGrid(grid) {
-    var res = "";
-    for (var i = 0; i < 9; i++) {
-        for (var j = 0; j < 9; j++) {
-            res += grid[i][j];
-        }
-        res += "\n";
+      if (i == 2 | i == 5 | i == 8) {
+        layout += "\n+++++++++++++++++++++++\n";
+      } else {
+        layout += "\n"
+      }
     }
-    console.log(res);
+    console.log(layout);
+  }
+
+  sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds) {
+        break;
+      }
+    }
+  }
+
+  reset_board() {
+    console.log("\x1B[2J")
   }
 }
 // The file has newlines at the end of each line,
